@@ -1,6 +1,6 @@
-# vueAdmin
+# ZetSpaVueApp
 a simple admin template based on [vuejs2](http://vuejs.org/) and [element](http://element.eleme.io/#/).
-
+基于vueAdmin开发
 ### Usage
 
 This is a project template for [vue-cli](https://github.com/vuejs/vue-cli).
