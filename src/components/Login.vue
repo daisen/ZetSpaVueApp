@@ -2,10 +2,11 @@
   <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm card-box loginform">
     <h3 class="title">系统登录</h3>
     <el-form-item prop="account">
-      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
+      <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号" @keyup.enter="accountKeyDown"></el-input>
+      <input type="text" @keyup.enter="accountKeyDown">
     </el-form-item>
     <el-form-item prop="checkPass">
-      <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="密码"></el-input>
+      <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="密码" v-focus="pwdFocus" @keyup.enter="pwdKeyDown"></el-input>
     </el-form-item>
     <el-checkbox v-model="checked" checked style="margin:0px 0px 35px 0px;">记住密码</el-checkbox>
     <el-form-item style="width:100%;">
@@ -17,8 +18,25 @@
 
 <script>
   export default {
+    directives: {
+      focus: {
+        componentUpdated: function(el, binding) {
+          if (Boolean(binding.value) === Boolean(binding.oldValue)) {
+            return;
+          }
+          if (binding.value) {            
+            el.getElementsByTagName('input')[0].focus();
+            console.log(el);
+          }            
+          else {
+            el.blur();
+          }             
+        },
+      }
+    },
     data() {
       return {
+        pwdFocus: false,
         ruleForm2: {
           account: '',
           checkPass: ''
@@ -37,6 +55,13 @@
       };
     },
     methods: {
+      accountKeyDown() {
+        
+        this.pwdFocus = !this.pwdFocus;
+      },
+      pwdKeyDown() {
+        this.handleSubmit2()
+      },
       handleReset2() {
         this.$refs.ruleForm2.resetFields();
       },
@@ -45,7 +70,7 @@
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             //_this.$router.push('/table');
-            _this.$router.replace('/table');
+            _this.$router.replace('/');
           } else {
             console.log('error submit!!');
             return false;
