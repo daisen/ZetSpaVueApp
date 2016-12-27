@@ -102,7 +102,7 @@
 <script>
 	import util from '../../common/util'
 	import NProgress from 'nprogress'
-	import user_data from '../../data/office.json'
+	import tmp_data from '../../data/office.json'
 
   export default {
 			  mounted: function() {
@@ -148,7 +148,7 @@
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
 					]
 				},
-				tableData: user_data,
+				tableData: tmp_data,
 				listLoading:false
      		}
     },
@@ -162,7 +162,7 @@
 			}
 		},
 		total: function() {
-			return user_data.length;
+			return tmp_data.length;
 		}
 	},
     methods: {
@@ -288,7 +288,7 @@
 			pageChanged: function(val){
 				var _this=this;
 				console.log(arguments)
-				_this.tableData = user_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
+				_this.tableData = tmp_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
 			}
     }
   }

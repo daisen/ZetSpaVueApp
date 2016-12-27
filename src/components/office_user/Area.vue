@@ -1,12 +1,12 @@
 <template>
 
 	<el-tabs style="width:100%;" type="card">
-		<el-tab-pane label="机构列表">
+		<el-tab-pane label="区域列表">
 			<!--工具条-->
 			<el-col :span="24" class="toolbar">
 				<el-form :inline="true" :model="formInline" class="demo-form-inline">
 					<el-form-item>
-						<el-input v-model="formInline.user" placeholder="姓名"></el-input>
+						<el-input v-model="formInline.user" placeholder="区域名称"></el-input>
 					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" icon="search">查询</el-button>
@@ -19,16 +19,15 @@
 				<el-table :data="tableData" highlight-current-row v-loading="listLoading" style="width: 100%;">
 					<el-table-column type="index" width="60">
 					</el-table-column>
-					<el-table-column prop="name" label="机构名称" width="180" sortable></el-table-column>
-					<el-table-column prop="area_id" label="归属区域" width="180" sortable></el-table-column>
-					<el-table-column prop="code" label="机构编码" width="180" sortable></el-table-column>
-					<el-table-column prop="type" label="机构类型" width="180" sortable></el-table-column>
+					<el-table-column prop="name" label="区域名称" width="180" sortable></el-table-column>
+					<el-table-column prop="code" label="区域编码" width="180" sortable></el-table-column>					
+					<el-table-column prop="type" label="区域类型" width="180" sortable></el-table-column>
 					<el-table-column prop="remarks" label="备注" width="180" sortable></el-table-column>
 					<el-table-column inline-template :context="_self" label="操作">
 						<span>
 					<el-button type="text" size="small" @click="handleEdit(row)">编辑</el-button>
 					<el-button type="text" size="small" @click="handleDel(row)">删除</el-button>
-					<el-button type="text" size="small" @click="handleDel(row)">添加下级组织</el-button>
+					<el-button type="text" size="small" @click="handleDel(row)">添加下级区域</el-button>
 				</span>
 					</el-table-column>
 				</el-table>
@@ -43,47 +42,17 @@
 		</el-tab-pane>
 		<el-tab-pane label="机构添加">
 			<el-form :model="editForm" label-width="120px" :rules="editFormRules" ref="editForm" style="margin:10px;width:50%;min-width:200px;">
-				<el-form-item label="上级机构" prop="parent_id">
+				<el-form-item label="上级区域" prop="parent_id">
 					<el-input v-model="editForm.parent_id" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="归属区域" prop="area_id">
-					<el-input v-model="editForm.area_id" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="机构名称" prop="name">
+				<el-form-item label="区域名称" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="机构编码" prop="code">
+				<el-form-item label="区域编码" prop="code">
 					<el-input v-model="editForm.code" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="机构级别" prop="grade">
-					<el-input v-model="editForm.grade" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="是否可用" prop="USEABLE">
-					<el-input v-model="editForm.USEABLE"  auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="主负责人" prop="PRIMARY_PERSON">
-					<el-input v-model="editForm.PRIMARY_PERSON" ></el-input>
-				</el-form-item>
-				<el-form-item label="副负责人" prop="DEPUTY_PERSON">
-					<el-input v-model="editForm.DEPUTY_PERSON" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="联系地址" prop="address">
-					<el-input v-model="editForm.address" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="邮政编码" prop="zip_code">
-					<el-input v-model="editForm.zip_code" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="负责人">
-					<el-input on-text="" off-text="" v-model="master"></el-input>
-				</el-form-item>
-				<el-form-item label="电话" prop="phone">
-					<el-input v-model="editForm.phone" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="传真" prop="fax">
-					<el-input v-model="editForm.fax" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="邮箱" prop="email">
-					<el-input v-model="editForm.email" auto-complete="off"></el-input>
+				<el-form-item label="区域类型" prop="type">
+					<el-input v-model="editForm.type" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="备注">
 					<el-input type="textarea" v-model="editForm.remarks"></el-input>
@@ -102,7 +71,7 @@
 <script>
 	import util from '../../common/util'
 	import NProgress from 'nprogress'
-	import user_data from '../../data/office.json'
+	import tmp_data from '../../data/area.json'
 
   export default {
     data() {
@@ -136,7 +105,7 @@
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
 					]
 				},
-				tableData: user_data,
+				tableData: tmp_data,
 				listLoading:false
      		}
     },
@@ -150,7 +119,7 @@
 			}
 		},
 		total: function() {
-			return user_data.length;
+			return tmp_data.length;
 		}
 	},
     methods: {
@@ -276,7 +245,7 @@
 			pageChanged: function(val){
 				var _this=this;
 				console.log(arguments)
-				_this.tableData = user_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
+				_this.tableData = tmp_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
 			}
     }
   }

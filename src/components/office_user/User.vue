@@ -100,7 +100,7 @@
 <script>
 	import util from '../../common/util'
 	import NProgress from 'nprogress'
-	import user_data from '../../data/user.json'
+	import tmp_data from '../../data/user.json'
 
   export default {
 	  mounted: function() {
@@ -151,7 +151,7 @@
 			}
 		},
 		total: function() {
-			return user_data.length;
+			return tmp_data.length;
 		}
 	},
     methods: {
@@ -275,7 +275,7 @@
 				this.editForm.addr='';
 			},
 			pageChanged: function(val){
-				this.tableData = user_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
+				this.tableData = tmp_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
 			}
     }
   }
