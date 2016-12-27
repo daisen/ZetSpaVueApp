@@ -1,51 +1,49 @@
 <template>
-	<section>
-		<!--工具条-->
-		<el-col :span="24" class="toolbar">
-			<el-form :inline="true" :model="formInline" class="demo-form-inline">
-				<el-form-item>
-					<el-input v-model="formInline.user" placeholder="姓名"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button>查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button @click="handleAdd">新增</el-button>
-				</el-form-item>
-			</el-form>
-		</el-col>
 
-		<!--列表-->
-		<template>
-			<el-table :data="tableData" highlight-current-row v-loading="listLoading" style="width: 100%;">
-				<el-table-column type="index" width="50">
-				</el-table-column>
-				<el-table-column prop="company_id" label="店名" width="180" sortable></el-table-column>
-				<el-table-column prop="office_id" label="部门" width="180" sortable></el-table-column>
-				<el-table-column prop="login_name" label="登录名" width="180" sortable></el-table-column>
-				<el-table-column prop="name" label="姓名" width="180" sortable></el-table-column>
-				<el-table-column prop="phone" label="电话" width="180" sortable></el-table-column>				
-				<el-table-column prop="mobile" label="手机" width="180" sortable>
-				</el-table-column>
-				<el-table-column inline-template :context="_self" label="操作" >
-					<span>
+	<el-tabs style="width:100%;" type="card">
+		<el-tab-pane label="用户列表">
+			<!--工具条-->
+			<el-col :span="24" class="toolbar">
+				<el-form :inline="true" :model="formInline" class="demo-form-inline">
+					<el-form-item>
+						<el-input v-model="formInline.user" placeholder="姓名"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" icon="search">查询</el-button>
+					</el-form-item>
+				</el-form>
+			</el-col>
+
+			<!--列表-->
+			<template>
+				<el-table :data="tableData" highlight-current-row v-loading="listLoading" style="width: 100%;">
+					<el-table-column type="index" width="60">
+					</el-table-column>
+					<el-table-column prop="company_id" label="店名" width="180" sortable></el-table-column>
+					<el-table-column prop="office_id" label="部门" width="180" sortable></el-table-column>
+					<el-table-column prop="login_name" label="登录名" width="180" sortable></el-table-column>
+					<el-table-column prop="name" label="姓名" width="180" sortable></el-table-column>
+					<el-table-column prop="phone" label="电话" width="180" sortable></el-table-column>
+					<el-table-column prop="mobile" label="手机" width="180" sortable>
+					</el-table-column>
+					<el-table-column inline-template :context="_self" label="操作">
+						<span>
 					<el-button type="text" size="small" @click="handleEdit(row)">编辑</el-button>
 					<el-button type="text" size="small" @click="handleDel(row)">删除</el-button>
 				</span>
-				</el-table-column>
-			</el-table>
-		</template>
+					</el-table-column>
+				</el-table>
+			</template>
 
-		<!--分页-->
-		<el-col :span="24" class="toolbar" style="padding-bottom:10px;">
-			<el-pagination :current-page="1" :page-sizes="[10, 50, 200]" :page-size="50" layout="total, sizes, prev, pager, next, jumper"
-				:total="tableData.length" style="float:right" @current-change="pageChanged">
-			</el-pagination>
-		</el-col>
-
-		<!--编辑界面-->
-		<el-dialog :title="editFormTtile" v-model="editFormVisible" :close-on-click-modal="false">
-			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+			<!--分页-->
+			<el-col :span="24" class="toolbar" style="padding-bottom:10px;">
+				<el-pagination :current-page="1" :page-sizes="[10, 50, 200]" :page-size="10" layout="total, prev, pager, next, jumper"
+					:total="total" style="float:right" @current-change="pageChanged">
+				</el-pagination>
+			</el-col>
+		</el-tab-pane>
+		<el-tab-pane label="用户添加">
+			<el-form :model="editForm" label-width="120px" :rules="editFormRules" ref="editForm" style="margin:10px;width:50%;min-width:200px;">
 				<el-form-item label="归属店" prop="company_id">
 					<el-input v-model="editForm.company_id" auto-complete="off"></el-input>
 				</el-form-item>
@@ -76,8 +74,8 @@
 				<el-form-item label="手机" prop="mobile">
 					<el-input v-model="editForm.mobile" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="是否允许登录" prop="login_flag">
-					<el-switch on-text="" off-text="" v-model="editForm.login_flag"></el-switch>
+				<el-form-item label="是否允许登录">
+					<el-switch on-text="" off-text="" v-model="editForm_login_flag"></el-switch>
 				</el-form-item>
 				<el-form-item label="用户类型" prop="user_type">
 					<el-input v-model="editForm.user_type" auto-complete="off"></el-input>
@@ -88,13 +86,15 @@
 				<el-form-item label="备注">
 					<el-input type="textarea" v-model="editForm.remarks"></el-input>
 				</el-form-item>
+				<el-form-item>
+					<el-button @click.native="editFormVisible = false">取 消</el-button>
+					<el-button type="primary" @click.native="editSubmit" :loading="editLoading">{{btnEditText}}</el-button>
+				</el-form-item>
 			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="editFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">{{btnEditText}}</el-button>
-			</div>
-		</el-dialog>
-	</section>
+
+
+		</el-tab-pane>
+	</el-tabs>
 </template>
 
 <script>
@@ -103,6 +103,9 @@
 	import user_data from '../../data/user.json'
 
   export default {
+	  mounted: function() {
+		this.pageChanged(1);
+	  },
     data() {
       return {
 				formInline: {
@@ -125,7 +128,7 @@
 					"mobile": "",
 					"user_type": "",
 					"remarks": "",
-					"login_flag": 1,
+					"login_flag": '1',
 				},
 				editLoading:false,
 				btnEditText:'提 交',
@@ -134,10 +137,23 @@
 						{ required: true, message: '请输入姓名', trigger: 'blur' }
 					]
 				},
-				tableData: user_data,
+				tableData: [],
 				listLoading:false
      		}
     },
+	computed: {
+		editForm_login_flag : {
+			get() {
+				return this.editForm.login_flag == '1';
+			},
+			set(v) {
+				this.editForm.login_flag = v ? '1' : '0'
+			}
+		},
+		total: function() {
+			return user_data.length;
+		}
+	},
     methods: {
 			//性别显示转换
 			formatSex:function(row, column){
@@ -208,7 +224,8 @@
 								_this.$notify({
 									title: '成功',
 									message: '提交成功',
-									type: 'success'
+									type: 'success',
+									duration: 100
 								});
 								_this.editFormVisible = false;
 
@@ -257,9 +274,7 @@
 				this.editForm.birth='';
 				this.editForm.addr='';
 			},
-			pageChanged: (val) => {
-				debugger
-				console.log(this)
+			pageChanged: function(val){
 				this.tableData = user_data.filter((user, index)=>{ if (index< val*10 && index >= (val == 0 ? 0 : val - 1)*10 ) return true;}) 
 			}
     }

@@ -64,8 +64,12 @@
 		}
       }
     },
+	mounted: function() {
+		this.currentPathName = this.$route.name;
+		this.currentPathNameParent=this.$route.matched[0].name;
+	},
 	watch: {
-		'$route' (to, from) {//监听路由改变
+		'$route' (to, from) {//监听路由改变			
 			this.currentPathName=to.name;
 			this.currentPathNameParent=to.matched[0].name;
 		}
